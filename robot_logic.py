@@ -1,7 +1,11 @@
 import random
+from typing import Optional, List, Tuple
+
+_DIRECTIONS = ((0, 1), (1, 0), (1, 1), (1, -1))
 
 
-def find_threat_or_win(grid_size, grid, color, length):
+def find_threat_or_win(grid_size: int, grid: List[List[Optional[str]]], color: str, length: int) \
+        -> Optional[Tuple[int, int]]:
     """
     Проверяет наличие угрозы или возможности выиграть для заданного цвета.
 
@@ -18,16 +22,18 @@ def find_threat_or_win(grid_size, grid, color, length):
     tuple или None: Координаты (столбец, строка) пустой клетки, в которую можно поставить фишку для блокировки,
                     или None, если такой клетки нет.
     """
-    directions = [(0, 1), (1, 0), (1, 1), (1, -1)]
+
     for x in range(grid_size):
         for y in range(grid_size):
-            if grid[y][x] == color:
-                for dr, dc in directions:
-                    count = 1
-                    empty_spots = []
+            if grid[y][x] != color:
+                continue
+            for dr, dc in _DIRECTIONS:
+                count = 1
+                empty_spots = []
 
+                for direction in [1, -1]:
                     for i in range(1, length):
-                        r, c = y + dr * i, x + dc * i
+                        r, c = y + dr * i * direction, x + dc * i * direction
                         if 0 <= r < grid_size and 0 <= c < grid_size:
                             if grid[r][c] == color:
                                 count += 1
@@ -36,25 +42,15 @@ def find_threat_or_win(grid_size, grid, color, length):
                                 break
                             else:
                                 break
+                        else:
+                            break
 
-                    # Проверяем в противоположном направлении
-                    for i in range(1, length):
-                        r, c = y - dr * i, x - dc * i
-                        if 0 <= r < grid_size and 0 <= c < grid_size:
-                            if grid[r][c] == color:
-                                count += 1
-                            elif grid[r][c] is None:
-                                empty_spots.append((c, r))
-                                break
-                            else:
-                                break
-
-                    if count == length - 1 and empty_spots:
-                        return empty_spots[0]
-    return None
+                if count == length - 1 and empty_spots:
+                    return empty_spots[0]
 
 
-def find_best_move_near_bot(grid_size, grid, bot_color):
+def find_best_move_near_bot(grid_size: int, grid: List[List[Optional[str]]], bot_color: str) \
+        -> Optional[Tuple[int, int]]:
     """
     Ищет наилучший ход для бота рядом с его фишками.
 
@@ -70,12 +66,11 @@ def find_best_move_near_bot(grid_size, grid, bot_color):
     tuple или None: Координаты (столбец, строка) наилучшего хода для бота,
                     или None, если таких ходов нет.
     """
-    directions = [(0, 1), (1, 0), (1, 1), (1, -1)]  # Направления: горизонталь, вертикаль, диагонали
-    potential_moves = []
+    potential_moves: List[Tuple[int, int]] = []
     for x in range(grid_size):
         for y in range(grid_size):
             if grid[y][x] == bot_color:
-                for dr, dc in directions:
+                for dr, dc in _DIRECTIONS:
                     r, c = y + dr, x + dc
                     if 0 <= r < grid_size and 0 <= c < grid_size and grid[r][c] is None:
                         potential_moves.append((c, r))

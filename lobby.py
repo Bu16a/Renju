@@ -2,10 +2,11 @@ import pygame
 
 from options import Options
 from window import Window
+from typing import Optional, Tuple
 
 
 class Lobby:
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Инициализация класса Lobby.
 
@@ -13,13 +14,13 @@ class Lobby:
         а также добавляет кнопку для начала новой игры. Кнопка связывается с
         методом `start_new_game`.
         """
-        self.options = None
-        self.main_window = Window('images/icon.png', 660, 390, 'images/background.png', "RENJU")
+        self.options: Optional[Options] = None
+        self.main_window: Window = Window('images/icon.png', 660, 390, 'images/background.png', "RENJU")
         self.main_window.add_button(180, 220, 300, 60, 40, (255, 255, 255), (185, 186, 189),
                                     self.start_new_game, True, None, False, None,
                                     text='Начать новую игру')
 
-    def start_new_game(self, args):
+    def start_new_game(self, args: Optional[Tuple]) -> None:
         """
         Обрабатывает нажатие кнопки "Начать новую игру".
 
@@ -31,7 +32,7 @@ class Lobby:
         self.options = Options(self.exit_to_lobby)
         self.options.run_options()
 
-    def exit_to_lobby(self):
+    def exit_to_lobby(self) -> None:
         """
         Метод для выхода в лобби.
 
@@ -42,7 +43,7 @@ class Lobby:
         s = Lobby()
         s.run_lobby()
 
-    def run_lobby(self):
+    def run_lobby(self) -> None:
         """
         Запускает главный цикл лобби.
 

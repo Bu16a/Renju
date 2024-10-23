@@ -1,10 +1,11 @@
 import ctypes
 import pygame
 from button import Button
+from typing import Optional, Tuple, Callable, Dict
 
 
 class Window:
-    def __init__(self, icon, width, height, background, caption):
+    def __init__(self, icon: str, width: int, height: int, background: str, caption: str) -> None:
         """
         Инициализирует окно Pygame с заданными параметрами.
 
@@ -16,37 +17,39 @@ class Window:
         caption (str): Заголовок окна.
         """
         pygame.init()
-        self.screen = pygame.display.set_mode((width, height), 0, 32)
+        self.screen: pygame.Surface = pygame.display.set_mode((width, height), 0, 32)
         pygame.display.set_caption(caption)
-        self.background = pygame.image.load(background).convert()
+        self.background: pygame.Surface = pygame.image.load(background).convert()
         pygame.display.set_icon(pygame.image.load(icon))
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(icon)
-        self.buttons = {}
-        self.running = True
+        self.buttons: Dict[Tuple[int, int], Button] = {}
+        self.running: bool = True
 
-    def add_button(self, x, y, width, height, size, color, hover_color, function, on_close,
-                   args, is_transparent, obj, text=''):
+    def add_button(self, x: int, y: int, width: int, height: int, size: int, color: Tuple[int, int, int],
+                   hover_color: Tuple[int, int, int], function: Callable[[Optional[Tuple]], None],
+                   on_close: bool, args: Optional[Tuple], is_transparent: bool, obj: Optional[object], text: str = '')\
+            -> None:
         """
         Добавляет кнопку на окно.
         """
-        button = Button(x, y, width, height, size, color, hover_color, function, on_close, args,
-                        is_transparent, obj, text)
+        button = Button(x, y, width, height, size, color, hover_color,
+                        function, on_close, args, is_transparent, obj, text)
         self.buttons.setdefault(button.get_pos, button)
 
-    def update_buttons(self, pos):
+    def update_buttons(self, pos: Tuple[int, int]) -> None:
         """
         Обновляет состояние кнопок в зависимости от позиции мыши.
         """
         for button in self.buttons.values():
             button.update(pos)
 
-    def change_background(self, theme):
+    def change_background(self, theme: pygame.Surface) -> None:
         """
         Изменяет фоновое изображение окна.
         """
         self.background = theme
 
-    def draw_interface(self, x_screen, y_screen):
+    def draw_interface(self, x_screen: int, y_screen: int) -> None:
         """
         Рисует интерфейс окна, включая фон и кнопки.
         """
@@ -54,13 +57,13 @@ class Window:
         for button in self.buttons.values():
             button.draw(self.screen)
 
-    def draw_figure(self, figure, x, y):
+    def draw_figure(self, figure: pygame.Surface, x: int, y: int) -> None:
         """
         Рисует заданную фигуру на экране.
         """
         self.screen.blit(figure, (x, y))
 
-    def clicked(self, pos):
+    def clicked(self, pos: Tuple[int, int]) -> None:
         """
         Обрабатывает нажатия на кнопки.
         """
@@ -70,7 +73,7 @@ class Window:
                     self.on_close()
                 button.function(button.args)
 
-    def on_close(self):
+    def on_close(self) -> None:
         """
         Закрывает окно и завершает работу Pygame.
         """

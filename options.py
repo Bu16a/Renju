@@ -1,14 +1,14 @@
 import pygame
 
-from Renju.board import Board
+from pathlib import Path
+from board import Board
 from window import Window
-
-BLACK = "images/black.png"
-WHITE = "images/white.png"
+from typing import Callable, Optional, List, Tuple
+from button import ColorPath
 
 
 class Options:
-    def __init__(self, exit_to_lobby_callback):
+    def __init__(self, exit_to_lobby_callback: Callable[[], None]) -> None:
         """
         Инициализация класса Options.
 
@@ -19,12 +19,12 @@ class Options:
         Параметры:
         - exit_to_lobby_callback: Функция, вызываемая для выхода в лобби.
         """
-        self.new_game = None
-        self.exit_to_lobby_callback = exit_to_lobby_callback
-        self.color = BLACK
+        self.new_game: Optional[Board] = None
+        self.exit_to_lobby_callback: Callable[[], None] = exit_to_lobby_callback
+        self.color: str = ColorPath.BLACK
         with open('setting/theme.txt') as f:
-            self.theme = f'images/{f.readline()}'
-        self.options_window = Window('images/icon.png', 640, 640, self.theme, 'RENJU')
+            self.theme: str = f'images/{f.readline()}'
+        self.options_window: Window = Window('images/icon.png', 640, 640, self.theme, 'RENJU')
         self.options_window.add_button(195, 550, 250, 60, 30, (255, 255, 255), (185, 186, 189),
                                        self.start_game,
                                        True, None, False, None,
@@ -36,33 +36,34 @@ class Options:
                                        self.switch_theme, False, None,
                                        False, None, 'Сменить тему')
 
-    def switch_theme(self, args):
+    def switch_theme(self, args: Optional[Tuple] = None) -> None:
         """
         Смена темы игры.
 
         Загружает следующую тему из списка доступных тем и обновляет фон
         окна настроек. Изменения темы сохраняются в файл.
         """
-        themes = ['grid0.jpg', 'grid1.jpg', 'grid2.jpg']
-        with open('setting/theme.txt', 'r') as file:
-            prev_theme = file.readline().strip()
-        theme_index = (themes.index(prev_theme) + 1) % len(themes)
-        with open('setting/theme.txt', 'w') as file:
-            file.write(themes[theme_index])
-        new_theme = pygame.image.load(f'images/{themes[theme_index]}').convert()
+        themes: List[str] = ['grid0.jpg', 'grid1.jpg', 'grid2.jpg']
+        theme_file = Path('setting/theme.txt')
+        prev_theme: str = theme_file.read_text().strip()
+        theme_index: int = (themes.index(prev_theme) + 1) % len(themes)
+        theme_file.write_text(themes[theme_index])
+        theme_image_path = Path('images') / themes[theme_index]
+        new_theme: pygame.Surface = pygame.image.load(str(theme_image_path)).convert()
+
         self.theme = new_theme
         self.options_window.change_background(self.theme)
 
-    def switch_chip(self, args):
+    def switch_chip(self, args: Optional[Tuple] = None) -> None:
         """
         Смена цвета фишки игрока.
 
         Переключает цвет фишки между черным и белым. Также обновляет
         значение переменной `user`, указывая, какой цвет фишки у игрока.
         """
-        self.color = WHITE if self.color == BLACK else BLACK
+        self.color = ColorPath.WHITE if self.color == ColorPath.BLACK else ColorPath.BLACK
 
-    def start_game(self, args):
+    def start_game(self, args: Optional[Tuple] = None) -> None:
         """
         Начинает новую игру.
 
@@ -71,13 +72,13 @@ class Options:
         Затем запускает игру.
         """
         self.options_window.on_close()
-        theme_file = 'setting/theme.txt'
+        theme_file: str = 'setting/theme.txt'
         with open(theme_file, 'r') as file:
-            theme = file.readline().strip()
+            theme: str = file.readline().strip()
         self.new_game = Board(self.color, f'images/{theme}', self.exit_to_lobby_callback, self.exit_to_options)
         self.new_game.run()
 
-    def exit_to_options(self):
+    def exit_to_options(self) -> None:
         """
         Выход из текущих опций и возвращение в меню настроек.
 
@@ -85,10 +86,10 @@ class Options:
         после чего запускает метод `run_options` для отображения окна настроек.
         """
         self.options_window.on_close()
-        s = Options(self.exit_to_lobby_callback)
+        s: Options = Options(self.exit_to_lobby_callback)
         s.run_options()
 
-    def run_options(self):
+    def run_options(self) -> None:
         """
         Запускает главный цикл окна настроек.
 
@@ -103,7 +104,8 @@ class Options:
         """
         while self.options_window.running:
             self.options_window.draw_interface(0, 0)
-            self.options_window.draw_figure(pygame.image.load(self.color).convert_alpha(), 300, 460)
+            chip_image: pygame.Surface = pygame.image.load(self.color).convert_alpha()
+            self.options_window.draw_figure(chip_image, 300, 460)
             pygame.display.update()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
