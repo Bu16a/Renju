@@ -1,9 +1,11 @@
 import random
+from typing import Callable, Optional, Tuple, List
+
 import pygame
+
+from button import ColorPath
 from robot_logic import find_threat_or_win, find_best_move_near_bot
 from window import Window
-from typing import Callable, Optional, Tuple, List
-from button import ColorPath
 
 
 class Board:
@@ -84,7 +86,8 @@ class Board:
         Перезапускает игру, создавая новое игровое поле.
         """
         self._board.on_close()
-        restart_board = Board(self._player_color, self._theme, self._exit_to_lobby_callback, self._exit_to_options_callback)
+        restart_board = Board(self._player_color, self._theme, self._exit_to_lobby_callback,
+                              self._exit_to_options_callback)
         restart_board.run()
 
     def exit_to_lobby(self, args: Optional[Tuple[int, int]]) -> None:
