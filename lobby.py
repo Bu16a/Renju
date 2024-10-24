@@ -1,8 +1,10 @@
+from typing import Optional, Tuple
+
 import pygame
 
+from button import Button
 from options import Options
 from window import Window
-from typing import Optional, Tuple
 
 
 class Lobby:
@@ -16,9 +18,13 @@ class Lobby:
         """
         self.options: Optional[Options] = None
         self.main_window: Window = Window('images/icon.png', 660, 390, 'images/background.png', "RENJU")
-        self.main_window.add_button(180, 220, 300, 60, 40, (255, 255, 255), (185, 186, 189),
-                                    self.start_new_game, True, None, False, None,
-                                    text='Начать новую игру')
+        button_start_new_game = Button(x=180, y=220,
+                                       width=300, height=60,
+                                       size=40,
+                                       color=(255, 255, 255), hover_color=(185, 186, 189),
+                                       function=self.start_new_game,
+                                       text='Начать новую игру')
+        self.main_window.add_button(button_start_new_game)
 
     def start_new_game(self, args: Optional[Tuple]) -> None:
         """

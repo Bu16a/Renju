@@ -3,7 +3,7 @@ from typing import Callable, Optional, Tuple, List
 
 import pygame
 
-from button import ColorPath
+from button import ColorPath, Button
 from robot_logic import find_threat_or_win, find_best_move_near_bot
 from window import Window
 
@@ -38,31 +38,36 @@ class Board:
         size: int = 15
         for x in range(size):
             for y in range(size):
-                self._board.add_button(x=20 + 40 * x, y=20 + 40 * y, width=40, height=40,
-                                       size=36, color=(0, 0, 0),
-                                       hover_color=(0, 0, 0),
-                                       function=self.handle_click,
-                                       on_close=False,
-                                       args=(20 + 40 * x, 20 + 40 * y),
-                                       is_transparent=True,
-                                       obj=player_color,
-                                       text='')
+                button = Button(x=20 + 40 * x, y=20 + 40 * y, width=40, height=40,
+                                size=36,
+                                function=self.handle_click,
+                                args=(20 + 40 * x, 20 + 40 * y),
+                                is_transparent=True,
+                                obj=player_color)
+                self._board.add_button(button)
 
         # Кнопки для управления игрой
-        self._board.add_button(640, 0, 200, 100, 26, (255, 255, 255), (185, 186, 189),
-                               self.restart,
-                               True, None, False, None,
-                               'Перезапуск')
-        self._board.add_button(640, 100, 200, 100, 26, (255, 255, 255), (185, 186, 189),
-                               self.exit_to_lobby,
-                               True, None, False, None,
-                               'Выход в '
-                               'главное меню')
-        self._board.add_button(640, 200, 200, 100, 26, (255, 255, 255), (185, 186, 189),
-                               self.exit_to_options,
-                               True, None, False, None,
-                               'Выход в '
-                               'настройки')
+        button_restart = Button(x=640, y=0,
+                                width=200, height=100,
+                                size=26,
+                                color=(255, 255, 255), hover_color=(185, 186, 189),
+                                function=self.restart,
+                                text='Перезапуск')
+        button_exit_to_lobby = Button(x=640, y=100,
+                                      width=200, height=100,
+                                      size=26,
+                                      color=(255, 255, 255), hover_color=(185, 186, 189),
+                                      function=self.exit_to_lobby,
+                                      text='Выход в главное меню')
+        button_exit_to_options = Button(x=640, y=200,
+                                        width=200, height=100,
+                                        size=26,
+                                        color=(255, 255, 255), hover_color=(185, 186, 189),
+                                        function=self.exit_to_options,
+                                        text='Выход в настройки')
+        self._board.add_button(button_restart)
+        self._board.add_button(button_exit_to_options)
+        self._board.add_button(button_exit_to_lobby)
 
         # Загрузка изображений для победителя и бота
         winner = pygame.transform.scale(pygame.image.load("images/winner.png"), (290, 150))

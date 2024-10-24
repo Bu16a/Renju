@@ -1,7 +1,9 @@
 import ctypes
+from typing import Tuple, Dict
+
 import pygame
+
 from button import Button
-from typing import Optional, Tuple, Callable, Dict
 
 
 class Window:
@@ -25,15 +27,10 @@ class Window:
         self.buttons: Dict[Tuple[int, int], Button] = {}
         self.running: bool = True
 
-    def add_button(self, x: int, y: int, width: int, height: int, size: int, color: Tuple[int, int, int],
-                   hover_color: Tuple[int, int, int], function: Callable[[Optional[Tuple]], None],
-                   on_close: bool, args: Optional[Tuple], is_transparent: bool, obj: Optional[object], text: str = '')\
-            -> None:
+    def add_button(self, button: Button) -> None:
         """
         Добавляет кнопку на окно.
         """
-        button = Button(x, y, width, height, size, color, hover_color,
-                        function, on_close, args, is_transparent, obj, text)
         self.buttons.setdefault(button.get_pos, button)
 
     def update_buttons(self, pos: Tuple[int, int]) -> None:

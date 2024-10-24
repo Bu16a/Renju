@@ -1,10 +1,11 @@
+from pathlib import Path
+from typing import Callable, Optional, List, Tuple
+
 import pygame
 
-from pathlib import Path
 from board import Board
+from button import ColorPath, Button
 from window import Window
-from typing import Callable, Optional, List, Tuple
-from button import ColorPath
 
 
 class Options:
@@ -25,18 +26,29 @@ class Options:
         with open('setting/theme.txt') as f:
             self.theme: str = f'images/{f.readline()}'
         self.options_window: Window = Window('images/icon.png', 640, 640, self.theme, 'RENJU')
-        self.options_window.add_button(195, 550, 250, 60, 30, (255, 255, 255), (185, 186, 189),
-                                       self.start_game,
-                                       True, None, False, None,
-                                       'Начать игру')
-        self.options_window.add_button(40, 450, 250, 60, 30, (255, 255, 255), (185, 186, 189),
-                                       self.switch_chip, False, None, False, None,
-                                       'Сменить цвет фишки')
-        self.options_window.add_button(350, 450, 250, 60, 30, (255, 255, 255), (185, 186, 189),
-                                       self.switch_theme, False, None,
-                                       False, None, 'Сменить тему')
+        button_start_game = Button(x=195, y=550,
+                                   width=250, height=60,
+                                   size=30,
+                                   color=(255, 255, 255), hover_color=(185, 186, 189),
+                                   function=self.start_game,
+                                   text='Начать игру')
+        button_change_chip = Button(x=40, y=450,
+                                    width=250, height=60,
+                                    size=30,
+                                    color=(255, 255, 255), hover_color=(185, 186, 189),
+                                    function=self.change_chip,
+                                    text='Сменить цвет фишки')
+        button_change_theme = Button(x=350, y=450,
+                                     width=250, height=60,
+                                     size=30,
+                                     color=(255, 255, 255), hover_color=(185, 186, 189),
+                                     function=self.change_theme,
+                                     text='Сменить тему')
+        self.options_window.add_button(button_start_game)
+        self.options_window.add_button(button_change_chip)
+        self.options_window.add_button(button_change_theme)
 
-    def switch_theme(self, args: Optional[Tuple] = None) -> None:
+    def change_theme(self, args: Optional[Tuple] = None) -> None:
         """
         Смена темы игры.
 
@@ -54,7 +66,7 @@ class Options:
         self.theme = new_theme
         self.options_window.change_background(self.theme)
 
-    def switch_chip(self, args: Optional[Tuple] = None) -> None:
+    def change_chip(self, args: Optional[Tuple] = None) -> None:
         """
         Смена цвета фишки игрока.
 
@@ -86,8 +98,8 @@ class Options:
         после чего запускает метод `run_options` для отображения окна настроек.
         """
         self.options_window.on_close()
-        s: Options = Options(self.exit_to_lobby_callback)
-        s.run_options()
+        back_to_options: Options = Options(self.exit_to_lobby_callback)
+        back_to_options.run_options()
 
     def run_options(self) -> None:
         """

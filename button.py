@@ -10,9 +10,9 @@ class ColorPath(str):
 class Button:
     def __init__(self,
                  x: int, y: int, width: int, height: int, size: int,
-                 color: Tuple[int, int, int], hover_color: Tuple[int, int, int],
-                 function: Callable, on_close: bool, args: Optional[Tuple],
-                 is_transparent: bool, obj: Optional[str], text: str = '') -> None:
+                 function: Callable, args=None,
+                 color=(0, 0, 0), hover_color=(0, 0, 0), on_close=False,
+                 is_transparent=False, obj=None, text='') -> None:
         """
         Инициализирует кнопку с заданными параметрами.
 
@@ -30,6 +30,7 @@ class Button:
         is_transparent (bool): Флаг, указывающий, является ли кнопка полупрозрачной.
         obj (str): Путь к изображению кнопки.
         text (str): Текст на кнопке (по умолчанию пустая строка).
+        :rtype: object
         """
         self.new_obj: Optional[pygame.Surface] = None
         self.rect: pygame.Rect = pygame.Rect(x, y, width, height)
