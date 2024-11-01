@@ -1,7 +1,9 @@
 import ctypes
+from typing import Tuple, Dict
+
 import pygame
+
 from button import Button
-from typing import Optional, Tuple, Callable, Dict
 
 
 class Window:
@@ -24,16 +26,12 @@ class Window:
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(icon)
         self.buttons: Dict[Tuple[int, int], Button] = {}
         self.running: bool = True
+        pygame.font.init()
 
-    def add_button(self, x: int, y: int, width: int, height: int, size: int, color: Tuple[int, int, int],
-                   hover_color: Tuple[int, int, int], function: Callable[[Optional[Tuple]], None],
-                   on_close: bool, args: Optional[Tuple], is_transparent: bool, obj: Optional[object], text: str = '')\
-            -> None:
+    def add_button(self, button: Button) -> None:
         """
         Добавляет кнопку на окно.
         """
-        button = Button(x, y, width, height, size, color, hover_color,
-                        function, on_close, args, is_transparent, obj, text)
         self.buttons.setdefault(button.get_pos, button)
 
     def update_buttons(self, pos: Tuple[int, int]) -> None:
@@ -62,6 +60,15 @@ class Window:
         Рисует заданную фигуру на экране.
         """
         self.screen.blit(figure, (x, y))
+
+    def draw_text(self, text: str, x: int, y: int, font_size: int = 24,
+                  color: Tuple[int, int, int] = (255, 255, 255)) -> None:
+        """
+        Рисует текст на экране в указанной позиции.
+        """
+        font = pygame.font.SysFont(None, font_size)
+        text_surface = font.render(text, True, color)
+        self.screen.blit(text_surface, (x, y))
 
     def clicked(self, pos: Tuple[int, int]) -> None:
         """
