@@ -1,5 +1,6 @@
-import pygame
 from typing import Callable, Optional, Tuple
+
+import pygame
 
 
 class ColorPath(str):
@@ -45,14 +46,7 @@ class Button:
         self.is_transparent: bool = is_transparent
         self.args: Optional[Tuple] = args
         self.obj: Optional[pygame.Surface] = None
-        if obj is not None:
-            self.obj = pygame.transform.scale(
-                pygame.image.load(obj).convert_alpha(),
-                (self.rect.width, self.rect.height)
-            )
-        if self.is_transparent:
-            self.new_obj = self.obj.copy()
-            self.new_obj.set_alpha(128)
+        self.change_obj(obj)
 
     def draw(self, screen) -> None:
         """
@@ -92,11 +86,18 @@ class Button:
         else:
             self.is_hovered = False
 
-    def change_transparent(self) -> None:
+    def change_obj(self, obj) -> None:
         """
         Убирает полупрозрачность с кнопки.
         """
-        self.is_transparent = False
+        if obj is not None:
+            self.obj = pygame.transform.scale(
+                pygame.image.load(obj).convert_alpha(),
+                (self.rect.width, self.rect.height)
+            )
+        if self.is_transparent:
+            self.new_obj = self.obj.copy()
+            self.new_obj.set_alpha(128)
 
     @property
     def get_pos(self) -> Tuple[int, int]:

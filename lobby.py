@@ -2,8 +2,9 @@ from typing import Optional, Tuple
 
 import pygame
 
+from options_of_n_enemies import OptionsNEnemies
 from button import Button
-from options import Options
+from options_of_classic_mode import OptionsClassicMode
 from window import Window
 
 
@@ -16,17 +17,24 @@ class Lobby:
         а также добавляет кнопку для начала новой игры. Кнопка связывается с
         методом `start_new_game`.
         """
-        self.options: Optional[Options] = None
+        self.options: Optional[OptionsClassicMode] = None
         self.main_window: Window = Window('images/icon.png', 660, 390, 'images/background.png', "RENJU")
-        button_start_new_game = Button(x=180, y=220,
-                                       width=300, height=60,
-                                       size=40,
-                                       color=(255, 255, 255), hover_color=(185, 186, 189),
-                                       function=self.start_new_game,
-                                       text='Начать новую игру')
-        self.main_window.add_button(button_start_new_game)
+        button_start_classic_mode = Button(x=180, y=200,
+                                           width=300, height=60,
+                                           size=40,
+                                           color=(255, 255, 255), hover_color=(185, 186, 189),
+                                           function=self.start_classic_mode,
+                                           text='Классический режим')
+        button_start_game_with_n_enemies = Button(x=180, y=300,
+                                                  width=300, height=60,
+                                                  size=40,
+                                                  color=(255, 255, 255), hover_color=(185, 186, 189),
+                                                  function=self.start_game_with_n_enemies,
+                                                  text='Игра с n игроками')
+        self.main_window.add_button(button_start_classic_mode)
+        self.main_window.add_button(button_start_game_with_n_enemies)
 
-    def start_new_game(self, args: Optional[Tuple]) -> None:
+    def start_classic_mode(self, args: Optional[Tuple]) -> None:
         """
         Обрабатывает нажатие кнопки "Начать новую игру".
 
@@ -35,7 +43,19 @@ class Lobby:
         метод `run_options` для отображения окна настроек.
         """
         self.main_window.on_close()
-        self.options = Options(self.exit_to_lobby)
+        self.options = OptionsClassicMode(self.exit_to_lobby)
+        self.options.run_options()
+
+    def start_game_with_n_enemies(self, args: Optional[Tuple]) -> None:
+        """
+        Обрабатывает нажатие кнопки "Начать новую игру".
+
+        Закрывает текущее окно лобби и создает новый экземпляр класса `Options`,
+        передавая метод `exit_to_lobby` для выхода обратно в лобби. Затем запускает
+        метод `run_options` для отображения окна настроек.
+        """
+        self.main_window.on_close()
+        self.options = OptionsNEnemies(self.exit_to_lobby)
         self.options.run_options()
 
     def exit_to_lobby(self) -> None:

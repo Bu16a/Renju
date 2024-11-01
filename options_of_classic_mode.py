@@ -3,15 +3,15 @@ from typing import Callable, Optional, List, Tuple
 
 import pygame
 
-from board import Board
+from classic_game import ClassicMode
 from button import ColorPath, Button
 from window import Window
 
 
-class Options:
+class OptionsClassicMode:
     def __init__(self, exit_to_lobby_callback: Callable[[], None]) -> None:
         """
-        Инициализация класса Options.
+        Инициализация класса OptionsClassicMode.
 
         Создает окно настроек, загружает тему из файла и устанавливает
         цвет фишки игрока. Также добавляет кнопки для смены цвета фишки,
@@ -20,7 +20,7 @@ class Options:
         Параметры:
         - exit_to_lobby_callback: Функция, вызываемая для выхода в лобби.
         """
-        self.new_game: Optional[Board] = None
+        self.new_game: Optional[ClassicMode] = None
         self.exit_to_lobby_callback: Callable[[], None] = exit_to_lobby_callback
         self.color: str = ColorPath.BLACK
         with open('setting/theme.txt') as f:
@@ -87,7 +87,7 @@ class Options:
         theme_file: str = 'setting/theme.txt'
         with open(theme_file, 'r') as file:
             theme: str = file.readline().strip()
-        self.new_game = Board(self.color, f'images/{theme}', self.exit_to_lobby_callback, self.exit_to_options)
+        self.new_game = ClassicMode(self.color, f'images/{theme}', self.exit_to_lobby_callback, self.exit_to_options)
         self.new_game.run()
 
     def exit_to_options(self) -> None:
@@ -98,7 +98,7 @@ class Options:
         после чего запускает метод `run_options` для отображения окна настроек.
         """
         self.options_window.on_close()
-        back_to_options: Options = Options(self.exit_to_lobby_callback)
+        back_to_options: OptionsClassicMode = OptionsClassicMode(self.exit_to_lobby_callback)
         back_to_options.run_options()
 
     def run_options(self) -> None:

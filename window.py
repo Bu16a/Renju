@@ -26,6 +26,7 @@ class Window:
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(icon)
         self.buttons: Dict[Tuple[int, int], Button] = {}
         self.running: bool = True
+        pygame.font.init()
 
     def add_button(self, button: Button) -> None:
         """
@@ -59,6 +60,15 @@ class Window:
         Рисует заданную фигуру на экране.
         """
         self.screen.blit(figure, (x, y))
+
+    def draw_text(self, text: str, x: int, y: int, font_size: int = 24,
+                  color: Tuple[int, int, int] = (255, 255, 255)) -> None:
+        """
+        Рисует текст на экране в указанной позиции.
+        """
+        font = pygame.font.SysFont(None, font_size)
+        text_surface = font.render(text, True, color)
+        self.screen.blit(text_surface, (x, y))
 
     def clicked(self, pos: Tuple[int, int]) -> None:
         """
