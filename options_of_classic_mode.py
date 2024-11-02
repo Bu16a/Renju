@@ -11,7 +11,7 @@ from window import Window
 class OptionsClassicMode:
     def __init__(self, exit_to_lobby_callback: Callable[[], None]) -> None:
         """
-        Инициализация класса OptionsClassicMode.
+        Инициализация класса OptionsClassicMode .
 
         Создает окно настроек, загружает тему из файла и устанавливает
         цвет фишки игрока. Также добавляет кнопки для смены цвета фишки,
