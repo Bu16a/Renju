@@ -77,3 +77,57 @@ def find_best_move_near_bot(grid_size: int, grid: List[List[Optional[str]]], bot
     if potential_moves:
         return random.choice(potential_moves)
     return None
+
+
+def bot_move(grid_size, grid, bot_color, player_color) -> Tuple[int, int]:
+    """
+    Логика хода бота.
+    """
+    # 1. Поиск победного хода
+    if winning_move := find_threat_or_win(grid_size, grid, bot_color, 5):
+        return winning_move
+
+    # 2. Блокировка игрока, если у него есть 4 фишки подряд
+    if threat_move := find_threat_or_win(grid_size, grid, player_color, 5):
+        return threat_move
+
+    # 3. Блокировка игрока, если у него есть 3 фишки подряд
+    if threat_move := find_threat_or_win(grid_size, grid, player_color, 4):
+        return threat_move
+
+    # 4. Поиск хода рядом с фишками бота
+    if best_move := find_best_move_near_bot(grid_size, grid, bot_color):
+        return best_move
+
+    # 5. Если нет угроз и победных ходов, делаем случайный ход
+    available_moves: List[Tuple[int, int]] = [(x, y) for x in range(grid_size) for y in range(grid_size)
+                                              if grid[y][x] is None]
+    if available_moves:
+        return random.choice(available_moves)
+
+
+def check_winner(grid_size: int, grid: List[List[Optional[str]]], row: int, col: int) -> bool:
+    """
+    Проверяет наличие 5 фишек одного цвета в ряду.
+    """
+    current_color: Optional[str] = grid[row][col]
+
+    for dr, dc in _DIRECTIONS:
+        count: int = 1
+        for i in range(1, 5):
+            r, c = row + dr * i, col + dc * i
+            if 0 <= r < grid_size and 0 <= c < grid_size and grid[r][c] == current_color:
+                count += 1
+            else:
+                break
+        for i in range(1, 5):
+            r, c = row - dr * i, col - dc * i
+            if 0 <= r < grid_size and 0 <= c < grid_size and grid[r][c] == current_color:
+                count += 1
+            else:
+                break
+
+        if count >= 5:
+            return True
+
+    return False
