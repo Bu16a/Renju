@@ -1,5 +1,5 @@
-from pathlib import Path
-from typing import Callable, Optional, List, Tuple
+from collections.abc import Callable
+from typing import Optional
 
 import pygame
 
@@ -50,25 +50,26 @@ class OptionsNEnemies:
         self.options_window.add_button(button_count_enemies)
         self.options_window.add_button(button_change_theme)
 
-    def change_theme(self, args: Optional[Tuple] = None) -> None:
+    def change_theme(self, args: Optional[tuple] = None) -> None:
         """
         Смена темы игры.
 
         Загружает следующую тему из списка доступных тем и обновляет фон
         окна настроек. Изменения темы сохраняются в файл.
         """
-        themes: List[str] = ['grid0.jpg', 'grid1.jpg', 'grid2.jpg']
-        theme_file = Path('setting/theme.txt')
-        prev_theme: str = theme_file.read_text().strip()
-        theme_index: int = (themes.index(prev_theme) + 1) % len(themes)
-        theme_file.write_text(themes[theme_index])
-        theme_image_path = Path('images') / themes[theme_index]
-        new_theme: pygame.Surface = pygame.image.load(str(theme_image_path)).convert()
+        themes: list[str] = ['grid0.jpg', 'grid1.jpg', 'grid2.jpg']
+        with open('setting/theme.txt', 'r+') as f:
+            prev_theme: str = f'images/{f.readline()}'
+            theme_index: int = (themes.index(prev_theme[7:]) + 1) % len(themes)
+            f.seek(0)
+            f.write(themes[theme_index])
+            f.truncate()
+        new_theme: pygame.Surface = pygame.image.load(f'images/{themes[theme_index]}').convert()
 
         self.theme = new_theme
         self.options_window.change_background(self.theme)
 
-    def change_count(self, pos: Tuple[int, int]) -> None:
+    def change_count(self, pos: tuple[int, int]) -> None:
         """
         Изменить количество противников
         """
@@ -78,7 +79,7 @@ class OptionsNEnemies:
             self.count_enemies += 1
         self.options_window.buttons[pos].text = f'Количество противников: {self.count_enemies}'
 
-    def start_game(self, args: Optional[Tuple] = None) -> None:
+    def start_game(self, args: Optional[tuple] = None) -> None:
         """
         Начинает новую игру.
 

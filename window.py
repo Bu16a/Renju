@@ -1,5 +1,6 @@
 import ctypes
-from typing import Tuple, Dict
+from collections.abc import Callable
+from typing import Optional
 
 import pygame
 
@@ -24,7 +25,7 @@ class Window:
         self.background: pygame.Surface = pygame.image.load(background).convert()
         pygame.display.set_icon(pygame.image.load(icon))
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(icon)
-        self.buttons: Dict[Tuple[int, int], Button] = {}
+        self.buttons: dict[tuple[int, int], Button] = {}
         self.running: bool = True
         pygame.font.init()
 
@@ -34,7 +35,7 @@ class Window:
         """
         self.buttons.setdefault(button.get_pos, button)
 
-    def update_buttons(self, pos: Tuple[int, int]) -> None:
+    def update_buttons(self, pos: tuple[int, int]) -> None:
         """
         Обновляет состояние кнопок в зависимости от позиции мыши.
         """
@@ -62,7 +63,7 @@ class Window:
         self.screen.blit(figure, (x, y))
 
     def draw_text(self, text: str, x: int, y: int, font_size: int = 24,
-                  color: Tuple[int, int, int] = (255, 255, 255)) -> None:
+                  color: tuple[int, int, int] = (255, 255, 255)) -> None:
         """
         Рисует текст на экране в указанной позиции.
         """
@@ -70,7 +71,7 @@ class Window:
         text_surface = font.render(text, True, color)
         self.screen.blit(text_surface, (x, y))
 
-    def clicked(self, pos: Tuple[int, int]) -> None:
+    def clicked(self, pos: tuple[int, int]) -> None:
         """
         Обрабатывает нажатия на кнопки.
         """
