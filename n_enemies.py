@@ -1,4 +1,5 @@
-from typing import Callable, Optional, Tuple
+from collections.abc import Callable
+from typing import Optional
 
 import pygame
 
@@ -46,7 +47,7 @@ class NEnemiesMode(BaseGameMode):
                                 is_transparent=True, obj=ColorPath.BLACK)
                 self._board.add_button(button)
 
-    def undo_move(self, args: Optional[Tuple[int, int]] = None) -> None:
+    def undo_move(self, args: Optional[tuple[int, int]] = None) -> None:
         """Отменяет последний ход (игрока и всех ботов)."""
         if self._game_end or not self._move_undo_stack:
             return
@@ -56,7 +57,7 @@ class NEnemiesMode(BaseGameMode):
                 self._remove_move(move)
         self._move_redo_stack.append(moves)
 
-    def redo_move(self, args: Optional[Tuple[int, int]] = None) -> None:
+    def redo_move(self, args: Optional[tuple[int, int]] = None) -> None:
         """Повторяет последний отмененный ход (игрока и ботов)."""
         if self._game_end or not self._move_redo_stack:
             return
@@ -66,7 +67,7 @@ class NEnemiesMode(BaseGameMode):
             self.place_move(move, color)
         self._move_undo_stack.append(moves)
 
-    def _remove_move(self, move: Optional[Tuple[int, int]]) -> None:
+    def _remove_move(self, move: Optional[tuple[int, int]]) -> None:
         """
         Удаляет фишку с указанной позиции на поле.
         """
@@ -77,7 +78,7 @@ class NEnemiesMode(BaseGameMode):
             self._board.buttons[button_pos].is_transparent = True
             self._board.buttons[button_pos].change_obj(self._player_color)
 
-    def handle_click(self, pos: Tuple[int, int]) -> None:
+    def handle_click(self, pos: tuple[int, int]) -> None:
         """Обрабатывает клик игрока и инициирует ход ботов поочередно."""
         if self._game_end:
             return

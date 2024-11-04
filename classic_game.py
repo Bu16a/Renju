@@ -1,6 +1,5 @@
-from typing import Callable, Optional, Tuple
-
 import pygame
+from collections.abc import Callable
 
 from base_game import BaseGameMode
 from bot_logic import check_winner, bot_move
@@ -48,7 +47,7 @@ class ClassicMode(BaseGameMode):
                                 is_transparent=True, obj=self._player_color)
                 self._board.add_button(button)
 
-    def redo_move(self, args: Optional[Tuple[int, int]] = None) -> None:
+    def redo_move(self, args: tuple[int, int] | None = None) -> None:
         """
         Повторяет последний отмененный ход (по одному ходу игрока и бота).
         """
@@ -60,20 +59,19 @@ class ClassicMode(BaseGameMode):
         self.place_move(move_of_bot, self._bot_color)
         self._move_undo_stack.append(player_and_bot_moves)
 
-    def undo_move(self, args: Optional[Tuple[int, int]] = None) -> None:
+    def undo_move(self, args: tuple[int, int] | None = None) -> None:
         """
         Отменяет последний ход (по одному ходу игрока и бота).
         """
         if self._game_end:
             return
         if self._move_undo_stack:
-            # Удалить последний ход бота, если он был
             player_and_bot_moves = self._move_undo_stack.pop()
             self._remove_move(player_and_bot_moves[0])  # Удалить фишку игрока
             self._remove_move(player_and_bot_moves[1])  # Удалить фишку бота
             self._move_redo_stack.append(player_and_bot_moves)
 
-    def _remove_move(self, move: Optional[Tuple[int, int]]) -> None:
+    def _remove_move(self, move: tuple[int, int] | None) -> None:
         """
         Удаляет фишку с указанной позиции на поле.
         """
@@ -84,7 +82,7 @@ class ClassicMode(BaseGameMode):
             self._board.buttons[button_pos].is_transparent = True
             self._board.buttons[button_pos].change_obj(self._player_color)
 
-    def handle_click(self, pos: Tuple[int, int]) -> None:
+    def handle_click(self, pos: tuple[int, int]) -> None:
         """
         Обрабатывает нажатие на поле и ставит фишку в нужное место.
         """

@@ -1,5 +1,6 @@
 from datetime import datetime
-from typing import Callable, Optional, Tuple, List
+from collections.abc import Callable
+from typing import Optional
 
 import pygame
 
@@ -24,7 +25,7 @@ class BaseGameMode:
         exit_to_options (Callable): Функция для выхода в настройки.
         """
         self._theme: str = theme
-        self.class_arg = None
+        self.class_arg: Optional[str] = None
         self._board: Window = Window(icon='images/icon.png', width=840, height=640,
                                      background=self._theme, caption="RENJU")
         self._game_end: bool = False
@@ -38,14 +39,14 @@ class BaseGameMode:
         self._board.draw_figure(winner, 593, 300)
 
         self._grid_size: int = 15
-        self._grid: List[List[Optional[str]]] = [[None for _ in range(self._grid_size)] for _ in range(self._grid_size)]
+        self._grid: list[list[Optional[str]]] = [[None for _ in range(self._grid_size)] for _ in range(self._grid_size)]
         self._total_time: int = 180  # Общее время на игру (в секундах)
         self._player_time: int = 15  # Время игрока на ход (в секундах)
         self._last_time: datetime = datetime.now()
 
         # Стеки для отмены и повтора ходов
-        self._move_undo_stack = []
-        self._move_redo_stack = []
+        self._move_undo_stack: list[tuple] = []
+        self._move_redo_stack: list[tuple] = []
         self.create_control_buttons()
 
     def create_control_buttons(self):
@@ -89,7 +90,7 @@ class BaseGameMode:
             self._game_end = True
             self._winner = self._robot
 
-    def restart(self, args: Optional[Tuple[int, int]] = None) -> None:
+    def restart(self, args: Optional[tuple[int, int]] = None) -> None:
         """
         Перезапускает игру.
         """
@@ -98,33 +99,33 @@ class BaseGameMode:
                                   self._exit_to_options_callback)
         new_game.run()
 
-    def exit_to_lobby(self, args: Optional[Tuple[int, int]] = None) -> None:
+    def exit_to_lobby(self, args: Optional[tuple[int, int]] = None) -> None:
         """
         Выход в лобби.
         """
         self._board.on_close()
         self._exit_to_lobby_callback()
 
-    def exit_to_options(self, args: Optional[Tuple[int, int]] = None) -> None:
+    def exit_to_options(self, args: Optional[tuple[int, int]] = None) -> None:
         """
         Выход в настройки.
         """
         self._board.on_close()
         self._exit_to_options_callback()
 
-    def undo_move(self, args: Optional[Tuple[int, int]] = None) -> None:
+    def undo_move(self, args: Optional[tuple[int, int]] = None) -> None:
         """Отменяет последний ход."""
         if self._game_end or not self._move_undo_stack:
             return
         # Логика для отмены хода
 
-    def redo_move(self, args: Optional[Tuple[int, int]] = None) -> None:
+    def redo_move(self, args: Optional[tuple[int, int]] = None) -> None:
         """Повторяет последний отмененный ход."""
         if self._game_end or not self._move_redo_stack:
             return
         # Логика для повтора хода
 
-    def place_move(self, move: Tuple[int, int], color: str) -> None:
+    def place_move(self, move: tuple[int, int], color: str) -> None:
         """
         Размещает фишку бота на поле.
         """
