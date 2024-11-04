@@ -1,4 +1,3 @@
-from pathlib import Path
 from typing import Callable, Optional, List, Tuple
 
 import pygame
@@ -56,12 +55,13 @@ class OptionsClassicMode:
         окна настроек. Изменения темы сохраняются в файл.
         """
         themes: List[str] = ['grid0.jpg', 'grid1.jpg', 'grid2.jpg']
-        theme_file = Path('setting/theme.txt')
-        prev_theme: str = theme_file.read_text().strip()
-        theme_index: int = (themes.index(prev_theme) + 1) % len(themes)
-        theme_file.write_text(themes[theme_index])
-        theme_image_path = Path('images') / themes[theme_index]
-        new_theme: pygame.Surface = pygame.image.load(str(theme_image_path)).convert()
+        with open('setting/theme.txt', 'r+') as f:
+            prev_theme: str = f'images/{f.readline()}'
+            theme_index: int = (themes.index(prev_theme[7:]) + 1) % len(themes)
+            f.seek(0)
+            f.write(themes[theme_index])
+            f.truncate()
+        new_theme: pygame.Surface = pygame.image.load(f'images/{themes[theme_index]}').convert()
 
         self.theme = new_theme
         self.options_window.change_background(self.theme)

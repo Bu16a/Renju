@@ -2,6 +2,7 @@ import random
 from typing import Optional, List, Tuple
 
 _DIRECTIONS = ((0, 1), (1, 0), (1, 1), (1, -1))
+_ROW_LENGTH = 5
 
 
 def find_threat_or_win(grid_size: int, grid: List[List[Optional[str]]], color: str, length: int) \
@@ -106,21 +107,22 @@ def bot_move(grid_size, grid, bot_color, player_color) -> Tuple[int, int]:
         return random.choice(available_moves)
 
 
-def check_winner(grid_size: int, grid: List[List[Optional[str]]], row: int, col: int) -> bool:
+def check_winner(grid_size: int, grid: List[List[Optional[str]]], move: Tuple[int, int]) -> bool:
     """
     Проверяет наличие 5 фишек одного цвета в ряду.
     """
+    col, row = move
     current_color: Optional[str] = grid[row][col]
 
     for dr, dc in _DIRECTIONS:
         count: int = 1
-        for i in range(1, 5):
+        for i in range(1, _ROW_LENGTH):
             r, c = row + dr * i, col + dc * i
             if 0 <= r < grid_size and 0 <= c < grid_size and grid[r][c] == current_color:
                 count += 1
             else:
                 break
-        for i in range(1, 5):
+        for i in range(1, _ROW_LENGTH):
             r, c = row - dr * i, col - dc * i
             if 0 <= r < grid_size and 0 <= c < grid_size and grid[r][c] == current_color:
                 count += 1
