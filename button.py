@@ -1,5 +1,4 @@
 import pygame
-from typing import Callable, Optional, Tuple
 
 
 class ColorPath(str):
@@ -10,9 +9,10 @@ class ColorPath(str):
 class Button:
     def __init__(self,
                  x: int, y: int, width: int, height: int, size: int,
-                 color: Tuple[int, int, int], hover_color: Tuple[int, int, int],
-                 function: Callable, on_close: bool, args: Optional[Tuple],
-                 is_transparent: bool, obj: Optional[str], text: str = '') -> None:
+                 function: callable, args: tuple | None = None,
+                 color: tuple[int, int, int] = (0, 0, 0), hover_color: tuple[int, int, int] = (0, 0, 0),
+                 on_close: bool = False, is_transparent: bool = False,
+                 obj: str | None = None, text: str = '') -> None:
         """
         Инициализирует кнопку с заданными параметрами.
 
@@ -31,27 +31,20 @@ class Button:
         obj (str): Путь к изображению кнопки.
         text (str): Текст на кнопке (по умолчанию пустая строка).
         """
-        self.new_obj: Optional[pygame.Surface] = None
+        self.new_obj: pygame.Surface | None = None
         self.rect: pygame.Rect = pygame.Rect(x, y, width, height)
-        self.color: Tuple[int, int, int] = color
-        self.hover_color: Tuple[int, int, int] = hover_color
+        self.color: tuple[int, int, int] = color
+        self.hover_color: tuple[int, int, int] = hover_color
         self.text: str = text
         self.is_hovered: bool = False
-        self._pos: Tuple[int, int] = (x, y)
+        self._pos: tuple[int, int] = (x, y)
         self.size: int = size
-        self.function: Callable = function
+        self.function: callable = function
         self.on_close: bool = on_close
         self.is_transparent: bool = is_transparent
-        self.args: Optional[Tuple] = args
-        self.obj: Optional[pygame.Surface] = None
-        if obj is not None:
-            self.obj = pygame.transform.scale(
-                pygame.image.load(obj).convert_alpha(),
-                (self.rect.width, self.rect.height)
-            )
-        if self.is_transparent:
-            self.new_obj = self.obj.copy()
-            self.new_obj.set_alpha(128)
+        self.args: tuple | None = args
+        self.obj: pygame.Surface | None = None
+        self.change_obj(obj)
 
     def draw(self, screen) -> None:
         """
@@ -86,19 +79,23 @@ class Button:
         """
         Обновляет состояние кнопки в зависимости от позиции курсора мыши.
         """
-        if self.rect.collidepoint(pos):
-            self.is_hovered = True
-        else:
-            self.is_hovered = False
+        self.is_hovered = self.rect.collidepoint(pos)
 
-    def change_transparent(self) -> None:
+    def change_obj(self, obj: str | None) -> None:
         """
         Убирает полупрозрачность с кнопки.
         """
-        self.is_transparent = False
+        if obj is not None:
+            self.obj = pygame.transform.scale(
+                pygame.image.load(obj).convert_alpha(),
+                (self.rect.width, self.rect.height)
+            )
+        if self.is_transparent:
+            self.new_obj = self.obj.copy()
+            self.new_obj.set_alpha(128)
 
     @property
-    def get_pos(self) -> Tuple[int, int]:
+    def get_pos(self) -> tuple[int, int]:
         """
         Возвращает позицию кнопки.
         """
